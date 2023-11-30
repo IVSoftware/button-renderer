@@ -13,10 +13,12 @@ namespace button_renderer
             comboBoxTimers.SelectedIndex = 0;
             comboBoxTimers.SelectionChangeCommitted += async(sender, e) =>
             {
+                _timerMode = TimerMode.None;
+                await _busy.WaitAsync();
+                _timerMode = (TimerMode)(comboBoxTimers.SelectedItem ?? TimerMode.None);
                 BeginInvoke(()=>ActiveControl = button1);
                 string name;
-                var timerMode = (TimerMode)(comboBoxTimers.SelectedItem ?? TimerMode.None);
-                switch (timerMode)
+                switch (_timerMode)
                 {
                     case TimerMode.FocusNext:
                         do
@@ -32,7 +34,8 @@ namespace button_renderer
                                     default: case nameof(button3): button1.Focus(); break;
                                 }
                             }
-                        } while (timerMode == TimerMode.FocusNext);
+                        } while (_timerMode == TimerMode.FocusNext);
+                        _busy.Release();
                         break;
                     case TimerMode.SelectNext:
                         do
@@ -48,7 +51,8 @@ namespace button_renderer
                                     wrap: true
                                 );
                             }
-                        } while (timerMode == TimerMode.SelectNext);
+                        } while (_timerMode == TimerMode.SelectNext);
+                        _busy.Release();
                         break;
                     case TimerMode.NextActive:
                         do
@@ -64,11 +68,14 @@ namespace button_renderer
                                     default: case nameof(button3): ActiveControl = button1; break;
                                 }
                             }
-                        } while (timerMode == TimerMode.SelectNext);
+                        } while (_timerMode == TimerMode.SelectNext);
+                        _busy.Release();
                         break;
                 }
             };
         }
+        TimerMode _timerMode = TimerMode.None;
+        SemaphoreSlim _busy = new SemaphoreSlim(1, 1);
     }
     class ButtonEx : Button
     {
