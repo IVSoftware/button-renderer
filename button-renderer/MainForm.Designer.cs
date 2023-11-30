@@ -38,6 +38,8 @@
             // button1
             // 
             button1.BackColor = Color.FromArgb(40, 40, 40);
+            button1.FlatAppearance.BorderSize = 2;
+            button1.FocusCueColor = Color.Lime;
             button1.FocusRectangleColor = Color.Fuchsia;
             button1.Font = new Font("Segoe UI", 12F);
             button1.ForeColor = Color.LightGray;
@@ -51,6 +53,8 @@
             // button2
             // 
             button2.BackColor = Color.FromArgb(40, 40, 40);
+            button2.FlatAppearance.BorderSize = 2;
+            button2.FocusCueColor = Color.Cyan;
             button2.FocusRectangleColor = Color.Fuchsia;
             button2.Font = new Font("Segoe UI", 12F);
             button2.ForeColor = Color.LightGray;
@@ -64,6 +68,8 @@
             // button3
             // 
             button3.BackColor = Color.FromArgb(40, 40, 40);
+            button3.FlatAppearance.BorderSize = 2;
+            button3.FocusCueColor = Color.Yellow;
             button3.FocusRectangleColor = Color.Fuchsia;
             button3.Font = new Font("Segoe UI", 12F);
             button3.ForeColor = Color.LightGray;

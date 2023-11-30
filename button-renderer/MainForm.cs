@@ -88,21 +88,49 @@ namespace button_renderer
                 {
                     _focusRectangleColor = value;
                     Refresh();
-                }
+                }   
             }
         }
         Color _focusRectangleColor = Color.Red;
+
+        public Color FocusCueColor
+        {
+            get => _focusCueColor;
+            set
+            {
+                if (!Equals(_focusCueColor, value))
+                {
+                    _focusCueColor = value;
+                    Refresh();
+                }
+            }
+        }
+        Color _focusCueColor = default;
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (Focused)
+            if (Enabled && Focused && (MouseButtons == MouseButtons.None))
             {
-                using (Pen focusPen = new Pen(FocusRectangleColor, 2f))
+                if (FocusRectangleColor != default)
                 {
-                    focusPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-                    Rectangle focusRect = this.ClientRectangle;
-                    focusRect.Inflate(-7, -7);
-                    e.Graphics.DrawRectangle(focusPen, focusRect);
+                    using (Pen dottedPen = new Pen(FocusRectangleColor, 2f))
+                    {
+                        dottedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                        Rectangle focusRect = this.ClientRectangle;
+                        focusRect.Inflate(-12, -12);
+                        e.Graphics.DrawRectangle(dottedPen, focusRect);
+                    }
+                }
+                if (FocusCueColor != default)
+                {
+                    using (Pen cuePen = new Pen(FocusCueColor, 2f))
+                    {
+                        cuePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                        Rectangle focusRect = this.ClientRectangle;
+                        focusRect.Inflate(-2, -2);
+                        e.Graphics.DrawRectangle(cuePen, focusRect);
+                    }
                 }
             }
         }
