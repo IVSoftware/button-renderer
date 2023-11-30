@@ -124,9 +124,8 @@ namespace button_renderer
                 }
                 if (FocusCueColor != default)
                 {
-                    using (Pen cuePen = new Pen(FocusCueColor, 2f))
+                    using (Pen cuePen = new Pen(FocusCueColor, FlatAppearance.BorderSize))
                     {
-                        cuePen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
                         Rectangle focusRect = this.ClientRectangle;
                         focusRect.Inflate(-2, -2);
                         e.Graphics.DrawRectangle(cuePen, focusRect);
