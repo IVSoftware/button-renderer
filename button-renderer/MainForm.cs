@@ -57,9 +57,9 @@ namespace button_renderer
                     case TimerMode.NextActive:
                         do
                         {
+                            await Task.Delay(1000);
                             if (!comboBoxTimers.DroppedDown)
                             {
-                                await Task.Delay(1000);
                                 name = ActiveControl?.Name ?? string.Empty;
                                 switch (name)
                                 {
@@ -68,7 +68,7 @@ namespace button_renderer
                                     default: case nameof(button3): ActiveControl = button1; break;
                                 }
                             }
-                        } while (_timerMode == TimerMode.SelectNext);
+                        } while (_timerMode == TimerMode.NextActive);
                         _busy.Release();
                         break;
                 }
