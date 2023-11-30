@@ -1,12 +1,12 @@
-# Custom color for Button focus rectangle.
+# Custom color for Button focus rectangle and cue border.
 
-If you "have to custom paint that" it doesn't have to be a _bad_ thing. You go in your designer.cs file and manually swap out all `Button` for `ButtonEx` then you can have a design-time property for the focus color.
+Make sure the first button is the "one and only" control with `TabIndex=0` so it gets the focus, but there shouldn't be a difference between this and being tabbed into.
 
-[![design time property][1]][1]
+If you choose to "custom paint that" you can make it minimally invasive by manually swapping out all `Button` for `ButtonEx`. Then, with minimal code, you can have a design-time property for the outer focus cue solid border as well as the dotted focus rectangle.
+
+[![design time properties][1]][1]
 
 [![tab action][2]][2]
-
-Then make sure the first button is the "one and only" control with `TabIndex=0`.
 
 ___
 
@@ -22,21 +22,48 @@ class ButtonEx : Button
             {
                 _focusRectangleColor = value;
                 Refresh();
-            }
+            }   
         }
     }
     Color _focusRectangleColor = Color.Red;
+
+    public Color FocusCueColor
+    {
+        get => _focusCueColor;
+        set
+        {
+            if (!Equals(_focusCueColor, value))
+            {
+                _focusCueColor = value;
+                Refresh();
+            }
+        }
+    }
+    Color _focusCueColor = default;
+
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        if (Focused)
+        if (Enabled && Focused && (MouseButtons == MouseButtons.None))
         {
-            using (Pen focusPen = new Pen(FocusRectangleColor, 2f))
+            if (FocusRectangleColor != default)
             {
-                focusPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-                Rectangle focusRect = this.ClientRectangle;
-                focusRect.Inflate(-6, -6);
-                e.Graphics.DrawRectangle(focusPen, focusRect);
+                using (Pen dottedPen = new Pen(FocusRectangleColor, 2f))
+                {
+                    dottedPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+                    Rectangle focusRect = this.ClientRectangle;
+                    focusRect.Inflate(-12, -12);
+                    e.Graphics.DrawRectangle(dottedPen, focusRect);
+                }
+            }
+            if (FocusCueColor != default)
+            {
+                using (Pen cuePen = new Pen(FocusCueColor, FlatAppearance.BorderSize))
+                {
+                    Rectangle focusRect = this.ClientRectangle;
+                    focusRect.Inflate(-2, -2);
+                    e.Graphics.DrawRectangle(cuePen, focusRect);
+                }
             }
         }
     }
@@ -62,7 +89,7 @@ In order to behave:
 
 **Testbench**
 
-Here's the code I used to test this answer with with the values for `TabIndex` as shown in VS Menu\View\Tab Order. [Clone](https://github.com/IVSoftware/button-renderer.git).
+Here's the code I used to test this answer with with the values for `TabIndex` as shown in VS Menu\View\Tab Order. [Clone](https://github.com/IVSoftware/button-renderer.git). Using the combo box, timer modes can be selected to cycle though the three "programmatic" options of navigation from the list above.
 
 [![tab order][3]][3]
 
@@ -144,7 +171,6 @@ public partial class MainForm : Form
 ```
 
 
-
-  [1]: https://i.stack.imgur.com/011V4.png
-  [2]: https://i.stack.imgur.com/p5JJd.png
+  [1]: https://i.stack.imgur.com/kHjhY.png
+  [2]: https://i.stack.imgur.com/OOhJ8.png
   [3]: https://i.stack.imgur.com/iRKVO.png
